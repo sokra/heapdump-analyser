@@ -1,0 +1,22 @@
+{
+  "name": "heapdump-analyser",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "author": {
+    "email": "tobias.koppers@googlemail.com",
+    "name": "Tobias Koppers",
+    "url": "https://github.com/sokra"
+  },
+  "files": [
+    "src",
+    "find-leaks.js"
+  ],
+  "bin": "./find-leaks.js",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "cli-progress": "^3.9.0",
+    "heap": "^0.2.6",
+    "stream-json": "^1.7.2"
+  }
+}
