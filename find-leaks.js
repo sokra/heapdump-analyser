@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const calculateDistances = require("./src/calculate-distances");
 const getRetainerStack = require("./src/get-retainer-stack");
 const printNode = require("./src/print-node");
