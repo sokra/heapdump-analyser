@@ -15,7 +15,8 @@ const setWithItem = (set, item) => {
 
 /**
  * @typedef {Object} Job
- * @property {number} distance
+ * @property {number} estimatedTotalLength
+ * @property {number} length
  * @property {Job[]} children
  * @property {any} node
  * @property {Set<any>} nodes
@@ -37,16 +38,15 @@ module.exports = (name, node, additionalRoots) => {
 	const cycleSet = new Set([node]);
 	const search = (job) => {
 		const queue = new Heap((a, b) => {
-			return a.distance - b.distance;
+			return a.estimatedTotalLength - b.estimatedTotalLength;
 		});
 		queue.push(job);
-		const visited = new Set();
+		const visited = new Map();
 		while (!queue.empty()) {
 			const job = queue.pop();
-			if (job.distance === 0) return job;
-			if (job.node && additionalRoots.has(job.node)) return job;
+			if (job.node.distance === 0 || additionalRoots.has(job.node)) return job;
 			const push = (newJob) => {
-				if (isNaN(newJob.distance)) debugger;
+				if (isNaN(newJob.estimatedTotalLength)) debugger;
 				totalNodes++;
 				queue.push(newJob);
 			};
@@ -65,7 +65,7 @@ module.exports = (name, node, additionalRoots) => {
 					if (current.nodes.has(from_node)) continue edgeLoop;
 				} while ((current = current.parent));
 				if (cycleSet.has(from_node)) continue;
-				if (visited.has(from_node)) continue;
+				if (visited.get(from_node) <= job.length) continue;
 
 				const otherEdge = getOtherWeakMapEdge(edge);
 				if (otherEdge) {
@@ -88,11 +88,12 @@ module.exports = (name, node, additionalRoots) => {
 						if (current.nodes.has(otherFromNode)) continue edgeLoop;
 					} while ((current = current.parent));
 					if (cycleSet.has(otherFromNode)) continue;
-					if (visited.has(otherFromNode)) continue;
+					// if (visited.get(otherFromNode) <= job.length) continue;
 
 					cycleSet.add(node);
 					otherResult = search({
-						distance: otherFromNode.distance,
+						estimatedTotalLength: 1 + otherFromNode.distance,
+						length: 1,
 						node: otherFromNode,
 						nodes: new Set([node]),
 						edges: [otherEdge],
@@ -103,23 +104,27 @@ module.exports = (name, node, additionalRoots) => {
 
 					job.child = otherResult;
 
+					const length = job.length + otherResult.length + 1;
 					push({
-						distance: from_node.distance,
+						estimatedTotalLength: length + from_node.distance,
+						length,
 						node: from_node,
 						nodes: new Set([node]),
 						edges: [edge],
 						parent: job,
 					});
 				} else {
+					const length = job.length + 1;
 					push({
-						distance: from_node.distance,
+						estimatedTotalLength: length + from_node.distance,
+						length,
 						node: from_node,
 						nodes: setWithItem(job.nodes, node),
 						edges: [...job.edges, edge],
 						parent: job.parent,
 					});
 				}
-				visited.add(node);
+				visited.set(node, job.length);
 			}
 			if (processedNodes++ % 1024 === 0) {
 				bar.setTotal(totalNodes);
@@ -137,7 +142,8 @@ module.exports = (name, node, additionalRoots) => {
 	};
 
 	const result = search({
-		distance: node.distance,
+		estimatedTotalLength: node.distance,
+		length: 0,
 		node,
 		nodes: new Set(),
 		edges: [],

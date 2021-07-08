@@ -8,7 +8,8 @@ module.exports = (snapshot) => {
 		clearOnComplete: true,
 	});
 	bar.start(40);
-	let queue = [snapshot.nodes.find((node) => node.name === "(GC roots)")];
+	const gcRoot = snapshot.nodes.find((node) => node.name === "(GC roots)");
+	let queue = gcRoot.edges.map((e) => e.to_node);
 	for (let i = 0; queue.length > 0; i++) {
 		const nextQueue = [];
 		for (const node of queue) {

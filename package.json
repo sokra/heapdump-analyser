@@ -18,5 +18,9 @@
     "cli-progress": "^3.9.0",
     "heap": "^0.2.6",
     "stream-json": "^1.7.2"
+  },
+  "devDependencies": {
+    "heapdump": "^0.3.15",
+    "jest": "^27.0.6"
   }
 }
