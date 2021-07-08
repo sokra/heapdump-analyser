@@ -42,7 +42,7 @@ module.exports = (name, node, additionalRoots) => {
 		});
 		queue.push(job);
 		let best = job;
-		let remaining = 100000;
+		let remaining = 10000;
 
 		const updateBar = () => {
 			bar.setTotal(totalNodes);
@@ -53,16 +53,22 @@ module.exports = (name, node, additionalRoots) => {
 						.slice(-2)
 						.map((n) => ` > ${printNode(n, true)}`)
 						.join(""),
-				remaining: Math.round(100 - remaining / 1000) + "%",
+				remaining: Math.round(100 - remaining / 100) + "%",
 			});
 		};
 
 		const visited = new Map();
 		while (!queue.empty()) {
 			const job = queue.pop();
-			if (job.node.distance === 0 || additionalRoots.has(job.node)) return job;
+			if (job.node.distance === 0 || additionalRoots.has(job.node)) {
+				totalNodes -= queue.nodes.length;
+				return job;
+			}
 			if (job.node.distance < best.node.distance) best = job;
-			if (remaining-- <= 0) return best;
+			if (remaining-- <= 0) {
+				totalNodes -= queue.nodes.length;
+				return best;
+			}
 			const push = (newJob) => {
 				if (totalNodes++ % 2048 === 0) updateBar();
 				queue.push(newJob);
@@ -90,7 +96,7 @@ module.exports = (name, node, additionalRoots) => {
 				if (cycleSet.has(from_node)) continue;
 				if (visited.get(from_node) <= job.length) continue;
 
-				const otherEdge = getOtherWeakMapEdge(edge);
+				const otherEdge = edge.otherWeakMapEdge;
 				if (otherEdge) {
 					const otherFromNode = otherEdge.from_node;
 					if (typeof otherFromNode.distance !== "number") continue;
@@ -151,7 +157,7 @@ module.exports = (name, node, additionalRoots) => {
 			visited.set(node, job.length);
 			if (processedNodes++ % 2048 === 0) updateBar();
 		}
-		return false;
+		return best;
 	};
 
 	const result = search({

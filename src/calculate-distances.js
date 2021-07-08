@@ -1,4 +1,5 @@
 const cliProgress = require("cli-progress");
+const getOtherWeakMapEdge = require("./get-other-weak-map-edge");
 const isInternalEdge = require("./is-internal-edge");
 const isStrongEdge = require("./is-strong-edge");
 
@@ -18,6 +19,17 @@ module.exports = (snapshot) => {
 				for (const edge of node.edges) {
 					if (!isStrongEdge(edge)) continue;
 					if (isInternalEdge(edge)) continue;
+					if (!edge.otherWeakMapEdge) {
+						const other = getOtherWeakMapEdge(edge);
+						if (other !== undefined) {
+							edge.otherWeakMapEdge = other;
+							other.otherWeakMapEdge = edge;
+							if (other.from_node.distance === undefined) continue;
+						}
+					} else {
+						if (edge.otherWeakMapEdge.from_node.distance === undefined)
+							continue;
+					}
 					nextQueue.push(edge.to_node);
 				}
 			}

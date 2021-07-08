@@ -19,28 +19,28 @@ exports[`TestCase cycle should analyse the result 1`] = `
   object TestObject #2 @XXX
 
 
-    object TestObject #2 @XXX
+         synthetic (Stack roots) @XXX
+        internal X = object system / Context @XXX
+       context GLOBAL = object { maps, key } @XXX
+      .maps = object Array @XXX
+     [1] = object WeakMap @XXX
+    internal table = array  @XXX
  + internal X / part of key (TestObject @XXX) -> value (TestObject @XXX) pair in WeakMap (table @XXX) = object TestObject #3 @XXX
- |       synthetic (Stack roots) @XXX
- |      internal X = object system / Context @XXX
- |     context GLOBAL = object { maps, key } @XXX
- |    .maps = object Array @XXX
- |   [1] = object WeakMap @XXX
- |  internal table = array  @XXX
+ |  object TestObject #2 @XXX
  + internal X / part of key (TestObject @XXX) -> value (TestObject @XXX) pair in WeakMap (table @XXX) = object TestObject #3 @XXX
   object TestObject #3 @XXX
 
 
     object TestObject #3 @XXX
  + internal X / part of key (TestObject @XXX) -> value (TestObject @XXX) pair in WeakMap (table @XXX) = object TestObject #4 @XXX
- |     object TestObject #2 @XXX
+ |          synthetic (Stack roots) @XXX
+ |         internal X = object system / Context @XXX
+ |        context GLOBAL = object { maps, key } @XXX
+ |       .maps = object Array @XXX
+ |      [0] = object WeakMap @XXX
+ |     internal table = array  @XXX
  |  + internal X / part of key (TestObject @XXX) -> value (WeakMap @XXX) pair in WeakMap (table @XXX) = object WeakMap @XXX
- |  |       synthetic (Stack roots) @XXX
- |  |      internal X = object system / Context @XXX
- |  |     context GLOBAL = object { maps, key } @XXX
- |  |    .maps = object Array @XXX
- |  |   [0] = object WeakMap @XXX
- |  |  internal table = array  @XXX
+ |  |  object TestObject #2 @XXX
  |  + internal X / part of key (TestObject @XXX) -> value (WeakMap @XXX) pair in WeakMap (table @XXX) = object WeakMap @XXX
  |   object WeakMap @XXX
  |  internal table = array  @XXX
@@ -67,25 +67,12 @@ exports[`TestCase weak-map should analyse the result 1`] = `
 + .key = object TestObject #1 @XXX
 
 
-    object TestObject #1 @XXX
- + internal X / part of key (TestObject @XXX) -> value (TestObject @XXX) pair in WeakMap (table @XXX) = object TestObject #2 @XXX
- |        synthetic (Stack roots) @XXX
- |       internal X = object system / Context @XXX
- |      context GLOBAL = object { map, key, deep } @XXX
- |     .deep = object { nested } @XXX
- |    .nested = object { key, map } @XXX
- |   .map = object WeakMap @XXX
- |  internal table = array  @XXX
- + internal X / part of key (TestObject @XXX) -> value (TestObject @XXX) pair in WeakMap (table @XXX) = object TestObject #2 @XXX
-  object TestObject #2 @XXX
-
-
        synthetic (Stack roots) @XXX
       internal X = object system / Context @XXX
      context GLOBAL = object { map, key, deep } @XXX
     .deep = object { nested } @XXX
    .nested = object { key, map } @XXX
-+ .key = object TestObject #3 @XXX
++ .key = object TestObject #2 @XXX
 
 
         synthetic (Stack roots) @XXX
@@ -93,8 +80,21 @@ exports[`TestCase weak-map should analyse the result 1`] = `
       context GLOBAL = object { map, key, deep } @XXX
      .map = object WeakMap @XXX
     internal table = array  @XXX
+ + internal X / part of key (TestObject @XXX) -> value (TestObject @XXX) pair in WeakMap (table @XXX) = object TestObject #3 @XXX
+ |  object TestObject #2 @XXX
+ + internal X / part of key (TestObject @XXX) -> value (TestObject @XXX) pair in WeakMap (table @XXX) = object TestObject #3 @XXX
+  object TestObject #3 @XXX
+
+
+    object TestObject #1 @XXX
  + internal X / part of key (TestObject @XXX) -> value (TestObject @XXX) pair in WeakMap (table @XXX) = object TestObject #4 @XXX
- |  object TestObject #3 @XXX
+ |        synthetic (Stack roots) @XXX
+ |       internal X = object system / Context @XXX
+ |      context GLOBAL = object { map, key, deep } @XXX
+ |     .deep = object { nested } @XXX
+ |    .nested = object { key, map } @XXX
+ |   .map = object WeakMap @XXX
+ |  internal table = array  @XXX
  + internal X / part of key (TestObject @XXX) -> value (TestObject @XXX) pair in WeakMap (table @XXX) = object TestObject #4 @XXX
   object TestObject #4 @XXX
 "
