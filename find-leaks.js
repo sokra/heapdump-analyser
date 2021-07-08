@@ -40,19 +40,18 @@ if (!filename || !name) {
 	}
 	nodes.sort((a, b) => a.distance - b.distance);
 	nodes.forEach((n, i) => (n.name += ` #${i + 1}`));
-	const report = [];
 	let i = 0;
 	const roots = new Set();
 	for (const node of nodes) {
+		if (i++ !== 0) console.log("\n");
 		const stack = getRetainerStack(
 			`${printNode(node)} (of ${nodes.length})`,
 			node,
 			roots
 		);
-		report.push(printStack(stack));
+		console.log(printStack(stack));
 		roots.add(node);
 	}
-	console.log(report.join("\n\n\n"));
 })().then(
 	() => {
 		process.exitCode = 0;

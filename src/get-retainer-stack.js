@@ -26,14 +26,14 @@ const setWithItem = (set, item) => {
 
 module.exports = (name, node, additionalRoots) => {
 	const bar = new cliProgress.SingleBar({
-		format: `{bar} | {percentage}% | Computing retainer stacks of ${name}{path}`,
+		format: `{bar} | {percentage}% | {value}/{total} | Computing retainer stacks of ${name}{path} ({remaining})`,
 		clearOnComplete: true,
 	});
 
 	let processedNodes = 0;
 	let totalNodes = 0;
 
-	bar.start(1, 0, { path: "" });
+	bar.start(1, 0, { path: "", remaining: "0%" });
 
 	const cycleSet = new Set([node]);
 	const search = (job) => {
@@ -41,19 +41,42 @@ module.exports = (name, node, additionalRoots) => {
 			return a.estimatedTotalLength - b.estimatedTotalLength;
 		});
 		queue.push(job);
+		let best = job;
+		let remaining = 100000;
+
+		const updateBar = () => {
+			bar.setTotal(totalNodes);
+			bar.update(processedNodes, {
+				path:
+					(cycleSet.size > 2 ? ` > ... (${cycleSet.size - 2})` : "") +
+					Array.from(cycleSet)
+						.slice(-2)
+						.map((n) => ` > ${printNode(n, true)}`)
+						.join(""),
+				remaining: Math.round(100 - remaining / 1000) + "%",
+			});
+		};
+
 		const visited = new Map();
 		while (!queue.empty()) {
 			const job = queue.pop();
 			if (job.node.distance === 0 || additionalRoots.has(job.node)) return job;
+			if (job.node.distance < best.node.distance) best = job;
+			if (remaining-- <= 0) return best;
 			const push = (newJob) => {
-				if (isNaN(newJob.estimatedTotalLength)) debugger;
-				totalNodes++;
+				if (totalNodes++ % 2048 === 0) updateBar();
 				queue.push(newJob);
 			};
 			const node = job.node;
-			const edges = node.from_edges.filter(
+			let edges = node.from_edges.filter(
 				(e) => isStrongEdge(e) && !isInternalEdge(e)
 			);
+			if (edges.length > 10000) {
+				edges = edges.filter((e) => e.from_node.distance < node.distance);
+			}
+			if (edges.length > 10000) {
+				edges = edges.slice(0, 10000);
+			}
 			edgeLoop: for (const edge of edges) {
 				const from_node = edge.from_node;
 				if (typeof from_node.distance !== "number") continue;
@@ -124,19 +147,9 @@ module.exports = (name, node, additionalRoots) => {
 						parent: job.parent,
 					});
 				}
-				visited.set(node, job.length);
 			}
-			if (processedNodes++ % 1024 === 0) {
-				bar.setTotal(totalNodes);
-				bar.update(processedNodes, {
-					path:
-						(cycleSet.size > 2 ? " > ..." : "") +
-						Array.from(cycleSet)
-							.slice(-2)
-							.map((n) => ` > ${printNode(n, true)}`)
-							.join(""),
-				});
-			}
+			visited.set(node, job.length);
+			if (processedNodes++ % 2048 === 0) updateBar();
 		}
 		return false;
 	};

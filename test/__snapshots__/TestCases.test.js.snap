@@ -58,10 +58,7 @@ exports[`TestCase prefer-easier-path should analyse the result 1`] = `
 "
 `;
 
-exports[`TestCase unreferenced should analyse the result 1`] = `
-"
-"
-`;
+exports[`TestCase unreferenced should analyse the result 1`] = `""`;
 
 exports[`TestCase weak-map should analyse the result 1`] = `
 "     synthetic (Stack roots) @XXX
