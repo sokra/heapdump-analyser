@@ -5,9 +5,7 @@ const rootPath = path.resolve(__dirname, "..");
 const findLeaks = path.resolve(rootPath, "find-leaks.js");
 
 const cleanOutput = (output) => {
-	return output
-		.replace(/@\d+/g, "@XXX")
-		.replace(/internal \d+/g, "internal XXX");
+	return output.replace(/@\d+/g, "@XXX").replace(/internal \d+/g, "internal X");
 };
 
 describe("TestCase", () => {
