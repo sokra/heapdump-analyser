@@ -1,8 +1,15 @@
 # heapdump-analyser
 
 ```sh
+heapdump-analyser dump.heapsnapshot
+```
+
+Enters interactive mode.
+
+```sh
 heapdump-analyser dump.heapsnapshot ClassToFind
 heapdump-analyser dump.heapsnapshot ClosureToFind()
+heapdump-analyser dump.heapsnapshot @IdToFind
 ```
 
 Finds all `ClassToFind` classes or ClosureToFind closures in the heapsnapshot and prints out a colorful retainer trace for them.
