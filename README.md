@@ -14,6 +14,12 @@ heapdump-analyser dump.heapsnapshot @IdToFind
 
 Finds all `ClassToFind` classes or ClosureToFind closures in the heapsnapshot and prints out a colorful retainer trace for them.
 
+```sh
+heapdump-analyser a.heapsnapshot b.heapsnapshot c.heapsnapshot [ClassToFind|ClosureToFind()|@IdToFind]
+```
+
+Finds only retained objects in c.heapsnapshot that were allocated between a.heapsnapshot and b.heapsnapshot.
+
 Compared to the v8 devtools it
 
 - correctly analyses WeakMaps and circular dependencies within them.
