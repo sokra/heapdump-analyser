@@ -9,20 +9,36 @@ module.exports = (node, short) => {
 			const bound_function = fnNode.edges.find(
 				(e) => e.name_or_index === "bound_function"
 			)?.to_node;
-			if (!bound_function) break;
-			fnNode = bound_function;
-			prefix = "bound ";
+			const await_function = fnNode.edges
+				.find((e) => e.name_or_index === "context")
+				?.to_node.edges.find((e) => e.name_or_index === "extension")
+				?.to_node.edges.find((e) => e.name_or_index === "function")?.to_node;
+			if (bound_function) {
+				fnNode = bound_function;
+				prefix += "bound ";
+			} else if (await_function) {
+				fnNode = await_function;
+				prefix += "awaited in ";
+			} else {
+				break;
+			}
 		}
 		const name = fnNode.edges
 			.find((e) => e.name_or_index === "shared")
 			?.to_node.edges.find((e) => e.name_or_index === "script_or_debug_info")
 			?.to_node.edges.find((e) => e.name_or_index === "name")?.to_node.name;
+		const codeName = fnNode.edges.find((e) => e.name_or_index === "code")
+			?.to_node?.name;
 		if (name && !short) {
-			return `${chalk.cyanBright(node.name)}() in ${chalk.blueBright(name)} @${
-				node.id
-			}`;
+			return `${prefix}${chalk.cyanBright(node.name)}() in ${chalk.blueBright(
+				name
+			)} @${node.id}`;
+		} else if (codeName && !short) {
+			return `${prefix}${chalk.cyanBright(node.name)}() ${chalk.blueBright(
+				codeName
+			)} @${node.id}`;
 		} else {
-			return `${chalk.cyanBright(node.name)}() @${node.id}`;
+			return `${prefix}${chalk.cyanBright(node.name)}() @${node.id}`;
 		}
 	}
 	if (!short && node.type === "object") {
